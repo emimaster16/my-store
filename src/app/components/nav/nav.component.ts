@@ -1,3 +1,5 @@
+import { Category } from './../../models/produc.model';
+import { CategoriesService } from './../../services/categories.service';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from './../../services/auth.service';
 import { User } from './../../models/user.model';
@@ -16,16 +18,24 @@ export class NavComponent implements OnInit {
 
   activeMenu = false;
   counter: number = 0;
+  limit: number = 10;
+  offset: number = 0;
+
+  categories: Category[] = [];
 
   constructor(
+    private categoriesService: CategoriesService,
     private storeService: StoreService,
-    private authService: AuthService) {
+    private authService: AuthService,
+  ) {
   }
 
   ngOnInit(): void {
     this.storeService.myCart$.subscribe(products => {
       this.counter = products.length;
     })
+
+    this.getAllCategories();
   }
 
   toggleMenu() {
@@ -35,9 +45,13 @@ export class NavComponent implements OnInit {
   login() {
     this.authService.loginAndGet('emimaster16@gmail.com', '123456')
       .subscribe(user => {
-        console.log(user);
         this.profile = user;
       });
   }
 
+  getAllCategories() {
+    this.categoriesService.getAll(this.limit, this.offset).subscribe(data => {
+      this.categories = data;
+    })
+  }
 }

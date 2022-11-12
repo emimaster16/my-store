@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ProductsService } from 'src/app/services/products.service';
 
 import { Product, CreateProductDto, UpdateProductDto } from '../../models/produc.model';
@@ -9,10 +9,8 @@ import { StoreService } from './../../services/store.service';
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent {
 
-  limit = 10;
-  offset = 0;
   total: number = 0;
   today = new Date();
   showProductDetail = false;
@@ -28,15 +26,14 @@ export class ProductsComponent implements OnInit {
     price: 0,
     id: '',
   };
-  products: Product[] = [];
+
+  @Output() loadMore = new EventEmitter();
+  @Input() products: Product[] = [];
+
   myShoppingCart: Product[] = [];
 
   constructor(private storeService: StoreService, private productService: ProductsService) {
     this.myShoppingCart = storeService.getMyShoppingCart();
-  }
-
-  ngOnInit(): void {
-    this.loadMore();
   }
 
   onAddToShoppingCart(product: Product) {
@@ -49,7 +46,7 @@ export class ProductsComponent implements OnInit {
   }
 
   onShowDetail(id: string) {
-    this.productService.getProduct(id).subscribe(data => {
+    this.productService.getOne(id).subscribe(data => {
       this.onToggleProductDetail();
       this.productChosen = data;
     }, errorMsg => {
@@ -66,7 +63,6 @@ export class ProductsComponent implements OnInit {
       price: 50000,
     };
     this.productService.create(productDto).subscribe(data => {
-      console.log('created', data);
       this.products.unshift(data);
     });
   }
@@ -77,8 +73,6 @@ export class ProductsComponent implements OnInit {
     };
     const id = this.productChosen.id;
     this.productService.update(id, changes).subscribe(data => {
-      console.log('updated', data);
-
       const productIndex = this.products.findIndex(item => item.id === this.productChosen.id);
 
       this.products[productIndex] = data;
@@ -96,11 +90,8 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  loadMore() {
-    this.productService.getAllProducts(this.limit, this.offset).subscribe(data => {
-      this.products = this.products.concat(data);
-      this.offset += this.limit;
-    });
+  onLoadMore() {
+    this.loadMore.emit();
   }
 
 }

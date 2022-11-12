@@ -17,13 +17,11 @@ export class ImgComponent {
 
   }
 
-
   imgError() {
     this.img = this.imgDefault;
   }
 
   imgLoaded() {
-    console.log('Log son');
     this.loaded.emit(this.img);
   }
 }

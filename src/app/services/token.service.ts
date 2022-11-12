@@ -9,8 +9,6 @@ export class TokenService {
   constructor(private cookieService: CookieService) { }
 
   setToken(token: string) {
-    console.log(token);
-
     this.cookieService.set('token', token);
   }
 

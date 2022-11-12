@@ -11,7 +11,7 @@ import { checkTime } from '../interceptors/time.interceptor';
 })
 export class ProductsService {
 
-  private urlApi: string = `${environment.API_URL}/api/products`;
+  private urlApi: string = `${environment.API_URL}/api`;
 
   constructor(private http: HttpClient) {
 
@@ -23,11 +23,9 @@ export class ProductsService {
       params = params.set('limit', limit);
       params = params.set('offset', offset);
     }
-    return this.http.get<Product[]>(`${this.urlApi}`, { params, context: checkTime() }).pipe(
+    return this.http.get<Product[]>(`${this.urlApi}/products`, { params, context: checkTime() }).pipe(
       retry(3),
       map(products => products.map(item => {
-        console.log("IVA: " + .19 * item.price);
-
         return {
           ...item,
           taxes: (.19 * item.price)
@@ -36,8 +34,19 @@ export class ProductsService {
     );
   }
 
-  getProduct(id: string) {
-    return this.http.get<Product>(`${this.urlApi}/${id}`)
+  getByCategory(categoryId: string, limit?: number, offset?: number) {
+
+    let params = new HttpParams();
+    if (limit && offset) {
+      params = params.set('limit', limit);
+      params = params.set('offset', offset);
+    }
+
+    return this.http.get<Product[]>(`${this.urlApi}/categories/${categoryId}/products`, { params });
+  }
+
+  getOne(id: string) {
+    return this.http.get<Product>(`${this.urlApi}/products/${id}`)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status == HttpStatusCode.Conflict) {
@@ -55,15 +64,15 @@ export class ProductsService {
   }
 
   create(dto: CreateProductDto) {
-    return this.http.post<Product>(this.urlApi, dto);
+    return this.http.post<Product>(`${this.urlApi}`, dto);
   }
 
   update(id: string, dto: any) {
-    return this.http.put<Product>(`${this.urlApi}/${id}`, dto);
+    return this.http.put<Product>(`${this.urlApi}/products/${id}`, dto);
   }
 
   delete(id: string) {
-    return this.http.delete<boolean>(`${this.urlApi}/${id}`);
+    return this.http.delete<boolean>(`${this.urlApi}/products/${id}`);
 
   }
 }

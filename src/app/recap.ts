@@ -27,8 +27,4 @@ class Person {
   }
 }
 
-const eminson = new Person('eminson', 'mendoza', 25);
-
-console.log(username, eminson.age)
-
 

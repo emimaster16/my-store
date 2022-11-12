@@ -25,6 +25,7 @@ import { RecoveryComponent } from './pages/recovery/recovery.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CategoryComponent } from './pages/category/category.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 
 
 const appRoutes: Routes = [
@@ -36,7 +37,9 @@ const appRoutes: Routes = [
   { path: 'recovery', component: RecoveryComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'not-found', component: NotFoundComponent },
-  { path: 'category', component: CategoryComponent },
+  { path: 'category/:id', component: CategoryComponent },
+  { path: 'product/:id', component: ProductDetailComponent },
+  { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({
@@ -56,7 +59,8 @@ const appRoutes: Routes = [
     RecoveryComponent,
     ProfileComponent,
     NotFoundComponent,
-    CategoryComponent
+    CategoryComponent,
+    ProductDetailComponent
   ],
   imports: [
     BrowserModule,
