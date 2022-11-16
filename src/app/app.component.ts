@@ -1,15 +1,28 @@
+import { TokenService } from './services/token.service';
 import { UsersService } from './services/users.service';
 import { AuthService } from './services/auth.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   template: '<router-outlet></router-outlet>',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
-  constructor(private authService: AuthService, private userService: UsersService) { }
+  constructor(
+    private tokenService: TokenService,
+    private authService: AuthService,
+    private userService: UsersService) { }
+
+  ngOnInit() {
+    const token = this.tokenService.getToken();
+    if (token) {
+      this.authService.profile()
+        .subscribe();
+    }
+
+  }
 
   createUser() {
     this.userService.create({

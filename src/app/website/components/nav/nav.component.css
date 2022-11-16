@@ -83,6 +83,9 @@
   top: -10px;
   right: -10px;
 }
+.link {cursor: pointer;}
+.mr-1{margin-right: 1rem;}
+.mr-2{margin-right: 2rem;}
 /* Medium only */
 @media screen and (min-width: 40em) and (max-width: 63.9375em) {
   .show-mobile {

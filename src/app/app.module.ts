@@ -1,9 +1,9 @@
+import { AdminGuard } from './guards/admin.guard';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { QuicklinkModule, QuicklinkStrategy } from 'ngx-quicklink';
 import { BrowserModule } from '@angular/platform-browser';
-import { CookieService } from 'ngx-cookie-service';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -23,6 +23,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'cms',
+    canActivate: [AdminGuard],
     loadChildren: () => import('./cms/cms.module').then(module => module.CmsModule),
   },
   { path: '**', component: NotFoundComponent },
@@ -45,8 +46,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TimeInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    CookieService
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

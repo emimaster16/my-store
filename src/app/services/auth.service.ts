@@ -1,5 +1,5 @@
 import { TokenService } from './token.service';
-import { switchMap, tap } from 'rxjs';
+import { switchMap, tap, BehaviorSubject } from 'rxjs';
 import { User } from './../models/user.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from './../../environments/environment';
@@ -12,6 +12,9 @@ import { Auth } from '../models/auth.model';
 export class AuthService {
 
   private apiUrl: string = `${environment.API_URL}/api/auth`;
+  // instancia el behavior subject || esot es reactividad entre componentes
+  private user = new BehaviorSubject<User | null>(null);
+  user$ = this.user.asObservable();
 
   constructor(private http: HttpClient, private tokenService: TokenService) { }
 
@@ -26,7 +29,10 @@ export class AuthService {
   }
 
   profile() {
-    return this.http.get<User>(`${this.apiUrl}/profile`);
+    return this.http.get<User>(`${this.apiUrl}/profile`)
+      .pipe(
+        tap(user => this.user.next(user))
+      );
   }
 
   loginAndGet(email: string, password: string) {
@@ -34,5 +40,9 @@ export class AuthService {
       .pipe(
         switchMap(() => this.profile())
       );
+  }
+
+  logout() {
+    this.tokenService.removeToken()
   }
 }
